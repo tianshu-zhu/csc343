@@ -1,0 +1,72 @@
+dbsrv1:~/csc343/a2/data$ psql csc343h-zhutians
+psql (9.5.9, server 9.5.8)
+Type "help" for help.
+
+csc343h-zhutians=> \i ddl.sql
+psql:ddl.sql:5: NOTICE:  drop cascades to 10 other objects
+DETAIL:  drop cascades to table parlgov.country
+drop cascades to table parlgov.party
+drop cascades to table parlgov.cabinet
+drop cascades to table parlgov.cabinet_party
+drop cascades to type parlgov.election_type
+drop cascades to table parlgov.election
+drop cascades to table parlgov.election_result
+drop cascades to table parlgov.party_position
+drop cascades to table parlgov.party_family
+drop cascades to table parlgov.politician_president
+DROP SCHEMA
+CREATE SCHEMA
+SET
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TYPE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+COPY 5
+COPY 215
+COPY 289
+COPY 158
+COPY 729
+COPY 1404
+COPY 214
+COPY 107
+COPY 37
+ALTER TABLE
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+csc343h-zhutians=> \d
+                 List of relations
+ Schema  |         Name         | Type  |  Owner
+---------+----------------------+-------+----------
+ parlgov | cabinet              | table | zhutians
+ parlgov | cabinet_party        | table | zhutians
+ parlgov | country              | table | zhutians
+ parlgov | election             | table | zhutians
+ parlgov | election_result      | table | zhutians
+ parlgov | party                | table | zhutians
+ parlgov | party_family         | table | zhutians
+ parlgov | party_position       | table | zhutians
+ parlgov | politician_president | table | zhutians
+(9 rows)
+
+csc343h-zhutians=> \i election2020.sql
+INSERT 0 1
+INSERT 0 5
+csc343h-zhutians=> select * from election_result where election_id = 2020;
+  id   | election_id | party_id | alliance_id | seats | votes | description
+-------+-------------+----------+-------------+-------+-------+-------------
+ 10001 |        2020 |      368 |             |       |       |
+ 10002 |        2020 |     1259 |       10001 |       |       |
+ 10003 |        2020 |     2148 |       10001 |       |       |
+ 10004 |        2020 |      296 |             |       |       |
+ 10005 |        2020 |     1255 |       10004 |       |       |
+(5 rows)
+
+csc343h-zhutians=>

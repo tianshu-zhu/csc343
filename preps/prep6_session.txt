@@ -1,0 +1,37 @@
+dbsrv1:~/csc343db$ psql csc343h-zhutians
+psql (9.5.9, server 9.5.8)
+Type "help" for help.
+
+csc343h-zhutians=> \i world_empty.sql 
+psql:world_empty.sql:1: NOTICE:  drop cascades to 2 other objects
+DETAIL:  drop cascades to table world.country
+drop cascades to table world.countrylanguage
+DROP SCHEMA
+CREATE SCHEMA
+SET
+CREATE TABLE
+CREATE TABLE
+csc343h-zhutians=> \i prep6_queries.txt 
+INSERT 0 3
+INSERT 0 3
+DELETE 1
+UPDATE 1
+csc343h-zhutians=> SELECT *
+FROM country;
+ code |   name   | continent | population 
+------+----------+-----------+------------
+ MAR  | Qumar    | pangaea   |       3380
+ BOR  | Borduria | Luna      |       1000
+(2 rows)
+
+csc343h-zhutians=> SELECT *
+FROM countrylanguage
+;
+ countrycode | countrylanguage | isofficial | percentage 
+-------------+-----------------+------------+------------
+ BOR         | English         |            |           
+ BOR         | Italian         |            |           
+ BOR         | Klingon         |            |           
+(3 rows)
+
+csc343h-zhutians=> 

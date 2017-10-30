@@ -1,0 +1,30 @@
+dbsrv1:~/csc343db$ psql csc343h-zhutians
+psql (9.5.9, server 9.5.8)
+Type "help" for help.
+
+csc343h-zhutians=> \i jelly-beans.sql
+CREATE TABLE
+INSERT 0 11
+csc343h-zhutians=> select * from guesses ;
+ number |   name    | guess | age
+--------+-----------+-------+-----
+      1 | Cole      |   365 |   5
+      2 | Avery     |   585 |   5
+      3 | Sam       |   502 |  12
+      4 | Madeleine |   511 |  18
+      5 | Cole      |   450 |   5
+      6 | Michael   |  1000 |  12
+      7 | Mackenzie |   700 |   5
+      8 | Mackenzie |   701 |   5
+      9 | Micah     |   498 |   4
+     10 | Jiaqi     |   509 |   4
+     11 | Jamieson  |   502 |   6
+(11 rows)
+
+csc343h-zhutians=> \q
+dbsrv1:~/csc343db$ javac JDBC.java
+dbsrv1:~/csc343db$ java -cp /local/packages/jdbc-postgresql/postgresql-42.1.4.jar: JDBC
+At least age?
+6
+average guesses among people with age at least 6: 628.750000
+dbsrv1:~/csc343db$
