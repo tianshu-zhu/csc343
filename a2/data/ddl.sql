@@ -9,7 +9,7 @@ SET SEARCH_PATH to parlgov;
 
 -- A democratic country that is part of the OECD (Organization for
 -- Economic Co-operation and Development: http://www.oecd.org) or the
--- European Union, and has a parliamentary system of government.  
+-- European Union, and has a parliamentary system of government.
 -- Countries with presidential systems are excluded.
 CREATE TABLE country(
   id INT primary key,
@@ -30,15 +30,15 @@ CREATE TABLE party(
   -- An abbreviation for the name of this party.
   name_short VARCHAR(10) NOT NULL,
   -- The full name of this party.
-  name VARCHAR(100) NOT NULL, 
+  name VARCHAR(100) NOT NULL,
   -- Further information about this party.
   description VARCHAR(1000),
   UNIQUE(country_id, name_short)
 );
 
 -- A "cabinet" is the set of government and opposition parties in parliament
--- as of each major change, such as an election or change of prime minister.  
--- This table itself stores the start date of a cabinet and other general 
+-- as of each major change, such as an election or change of prime minister.
+-- This table itself stores the start date of a cabinet and other general
 -- information it.  Table cabinet_party, which references this table,
 -- stores the political parties that were part of this cabinet.
 CREATE TABLE cabinet(
@@ -57,13 +57,13 @@ CREATE TABLE cabinet(
   description VARCHAR(1000),
   -- Further information about this cabinet.
   comment VARCHAR(1000),
-  -- The previous cabinet for this country.  This attribute forms a 
+  -- The previous cabinet for this country.  This attribute forms a
   -- "linked list" of cabinets for each country.
   -- Constraint: The country_id for this cabinet and the previous cabinet
   -- must be the same.
   previous_cabinet_id INT REFERENCES cabinet(id),
   -- The ID of the parliamentary election associated this cabinet.
-  election_id INT 
+  election_id INT
 );
 
 -- A party that was part of parliament during the period of a cabinet.
@@ -79,7 +79,7 @@ CREATE TABLE cabinet_party(
 
 -- A parliamentary election is an election within a country to choose
 -- a national government.  A European parliament election is an election,
--- held across all European Union countries, to choose national 
+-- held across all European Union countries, to choose national
 -- representatives for the European parliament.
 CREATE TYPE election_type AS ENUM(
 	'European Parliament', 'Parliamentary election');
@@ -99,7 +99,7 @@ CREATE TABLE election(
   -- The number of citizens eligible to vote in this election
   electorate INT NOT NULL,
   -- The number of people who did vote in this election.
-  votes_cast INT, 
+  votes_cast INT,
   -- The number of the votes cast that are valid.  A voter may "spoil"
   -- their vote either intentionally (in protest) or unintentionally (by
   -- filling it out incorrectly).  Only valid votes contribute to the
@@ -111,7 +111,7 @@ CREATE TABLE election(
   -- ID of the previous parliamentary election in this country, or
   -- NULL if there is no previous parliamentary election in the database.
   -- Note: Even EP elections have this attribute.
-  -- Constraint: The country_id for this election and the previous 
+  -- Constraint: The country_id for this election and the previous
   -- parliamentary election must be the same.
   previous_parliament_election_id INT REFERENCES election(id),
   -- ID of the previous EP election in this country, or
@@ -121,7 +121,7 @@ CREATE TABLE election(
   -- EP election must be the same.
   previous_ep_election_id INT REFERENCES election(id),
   -- The type of election this was.
-  e_type election_type NOT NULL 
+  e_type election_type NOT NULL
 );
 
 
@@ -134,7 +134,7 @@ CREATE TABLE election_result(
   party_id INT REFERENCES party(id),
   -- If this party belongs to an alliance for this election, this is
   -- the ID of the election result associated with the head party
-  -- in the alliance.  (All alliances have a head party.) 
+  -- in the alliance.  (All alliances have a head party.)
   alliance_id INT REFERENCES election_result(id),
   -- Number of seats the party won.
   seats INT,
@@ -155,7 +155,7 @@ CREATE TABLE party_position(
   -- This party's position on the economic (state/market) dimension.
   state_market REAL CHECK(state_market >= 0.0 AND state_market <= 10.0),
   -- This party's position on the cultural (liberty/authority) dimension.
-  liberty_authority REAL 
+  liberty_authority REAL
       CHECK(liberty_authority >= 0.0 AND liberty_authority <= 10.0)
 );
 
@@ -163,7 +163,7 @@ CREATE TABLE party_position(
 -- "conservative", or "religious".
 CREATE TABLE party_family(
   party_id INT REFERENCES party(id),
-  family VARCHAR(50) NOT NULL, 
+  family VARCHAR(50) NOT NULL,
   PRIMARY KEY(party_id, family)
 );
 
@@ -198,8 +198,8 @@ CREATE TABLE politician_president(
 \COPY party_family FROM 'party_family.csv' DELIMITER ',' CSV header;
 \COPY politician_president FROM 'politician_president.csv' DELIMITER ',' CSV header;
 
-ALTER TABLE cabinet ADD CONSTRAINT 
-  fk_election_id 
+ALTER TABLE cabinet ADD CONSTRAINT
+  fk_election_id
   FOREIGN KEY (election_id) REFERENCES election;
 
 CREATE INDEX cabinet_party_party_id_inx ON cabinet_party(party_id);
