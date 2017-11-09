@@ -32,17 +32,17 @@ create view voteRange_partyName as(
     select election.id as election_id, party.name_short as partyName,
         case
         when 0 <= 1.0*election_result.votes/election.votes_valid and 1.0*election_result.votes/election.votes_valid <= 0.05
-        Then '(0,5]'
+        Then '(0-5]'
         when 0.05 < 1.0*election_result.votes/election.votes_valid and 1.0*election_result.votes/election.votes_valid <= 0.1
-        Then '(5,10]'
+        Then '(5-10]'
         when 0.1 < 1.0*election_result.votes/election.votes_valid and 1.0*election_result.votes/election.votes_valid <= 0.2
-        Then '(10,20]'
+        Then '(10-20]'
         when 0.2 < 1.0*election_result.votes/election.votes_valid and 1.0*election_result.votes/election.votes_valid <= 0.3
-        Then '(20,30]'
+        Then '(20-30]'
         when 0.3 < 1.0*election_result.votes/election.votes_valid and 1.0*election_result.votes/election.votes_valid <= 0.4
-        Then '(30,40]'
+        Then '(30-40]'
         when 0.4 < 1.0*election_result.votes/election.votes_valid and 1.0*election_result.votes/election.votes_valid <= 1
-        Then '(40,100]'
+        Then '(40-100]'
         end as voteRange
     from election, election_result, party
     where election.id = election_result.election_id and
