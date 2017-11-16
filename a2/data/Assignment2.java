@@ -71,28 +71,28 @@ public class Assignment2 extends JDBCSubmission {
 
         try {
             // get information of given president
-            queryString1 = "select comment || ' ' || description as info" +
-                "from politician_president" +
-                "where id = ?";
+            String queryString1 = "select comment || ' ' || description as info " +
+                "from politician_president where id = ?";
             ps1 = connection.prepareStatement(queryString1);
             ps1.setInt(1, politicianName);
             infos = ps1.executeQuery();
             infos.next();
             String this_info = infos.getString("info");
+
             // get information of all other presidents and compare similarities
-            queryString2 = "select comment || ' ' || description as info" +
-                "from politician_president" +
-                "where id != ?";
+            String queryString2 = "select id, comment || ' ' || description as info " +
+                "from politician_president where id != ?";
             ps2 = connection.prepareStatement(queryString2);
             ps2.setInt(1, politicianName);
             allinfos = ps2.executeQuery();
             while (allinfos.next()) {
                 int id = allinfos.getInt("id");
                 String that_info = allinfos.getString("info");
-                if (similarity(this_info, that_info) > threshold) {
+                if(similarity(this_info, that_info) >= threshold) {
                     similarPresidentIds.add(id);
                 }
             }
+
         } catch (SQLException se) {
             System.err.println("SQL Exception." + "<Message>: " + se.getMessage());
         }
@@ -102,6 +102,25 @@ public class Assignment2 extends JDBCSubmission {
     public static void main(String[] args) {
         // You can put testing code in here. It will not affect our autotester.
         System.out.println("Hello");
+        try {
+            // q1
+            Assignment2 assignment2 = new Assignment2();
+            String url = "jdbc:postgresql://localhost:5432/csc343h-zhutians";
+            String username = "zhutians";
+            String password = "";
+            Boolean connected = assignment2.connectDB(url, username, password);
+            System.out.println(connected);
+
+            //q4
+            List<Integer> array = assignment2.findSimilarPoliticians(148, (float)0.9);
+            System.out.println(array);
+
+            // q2
+            Boolean disconnected = assignment2.disconnectDB();
+            System.out.println(disconnected);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
 }
