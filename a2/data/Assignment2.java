@@ -4,11 +4,12 @@ import java.util.List;
 // If you are looking for Java data structures, these are highly useful.
 // Remember that an important part of your mark is for doing as much in SQL (not Java) as you can.
 // Solutions that use only or mostly Java will not receive a high mark.
-//import java.util.ArrayList;
-//import java.util.Map;
-//import java.util.HashMap;
-//import java.util.Set;
-//import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Set;
+import java.util.HashSet;
+
 public class Assignment2 extends JDBCSubmission {
 
     public Assignment2() throws ClassNotFoundException {
@@ -19,13 +20,29 @@ public class Assignment2 extends JDBCSubmission {
     @Override
     public boolean connectDB(String url, String username, String password) {
         // Implement this method!
-        return false;
+        try {
+    		connection = DriverManager.getConnection(url, username, password);
+            PreparedStatement ps = connection.prepareStatement("SET SEARCH_PATH to parlgov;");
+            ps.executeUpdate();
+    		return true;
+    	}
+    	catch (SQLException se) {
+    		System.err.println("SQL Exception." + "<Message>:" + se.getMessage());
+    		return false;
+    	}
     }
 
     @Override
     public boolean disconnectDB() {
         // Implement this method!
-        return false;
+        try {
+            connection.close();
+            return true;
+        }
+        catch (SQLException se) {
+            System.err.println("SQL Exception." + "<Message>:" + se.getMessage());
+            return false;
+        }
     }
 
     @Override
@@ -37,7 +54,49 @@ public class Assignment2 extends JDBCSubmission {
     @Override
     public List<Integer> findSimilarPoliticians(Integer politicianName, Float threshold) {
         // Implement this method!
-        return null;
+        // initialize some variables
+        List<Integer> similarPresidentIds = new ArrayList<>();
+        Connection connection = this.connection;
+        PreparedStatement ps1 = null;
+        PreparedStatement ps2 = null;
+        ResultSet infos = null;
+        ResultSet allinfos = null;
+
+        try {
+            Class.forName("org.postgresql.Driver");
+        }
+        catch (ClassNotFoundException e) {
+            System.out.println("Failed to find the JDBC driver");
+        }
+
+        try {
+            // get information of given president
+            queryString1 = "select comment || ' ' || description as info" +
+                "from politician_president" +
+                "where id = ?";
+            ps1 = connection.prepareStatement(queryString1);
+            ps1.setInt(1, politicianName);
+            infos = ps1.executeQuery();
+            infos.next();
+            String this_info = infos.getString("info");
+            // get information of all other presidents and compare similarities
+            queryString2 = "select comment || ' ' || description as info" +
+                "from politician_president" +
+                "where id != ?";
+            ps2 = connection.prepareStatement(queryString2);
+            ps2.setInt(1, politicianName);
+            allinfos = ps2.executeQuery();
+            while (allinfos.next()) {
+                int id = allinfos.getInt("id");
+                String that_info = allinfos.getString("info");
+                if (similarity(this_info, that_info) > threshold) {
+                    similarPresidentIds.add(id);
+                }
+            }
+        } catch (SQLException se) {
+            System.err.println("SQL Exception." + "<Message>: " + se.getMessage());
+        }
+        return similarPresidentIds;
     }
 
     public static void main(String[] args) {
@@ -46,4 +105,3 @@ public class Assignment2 extends JDBCSubmission {
     }
 
 }
-

@@ -15,43 +15,47 @@ partyName VARCHAR(100)
 
 -- You may find it convenient to do this for each of the views
 -- that define your intermediate steps.  (But give them better names!)
-DROP VIEW IF EXISTS year_countryName, voteRange_partyName CASCADE;
+DROP VIEW IF EXISTS votePercent, voteRange CASCADE;
 
--- Define views for your intermediate steps here.
-create view year_countryName as(
-    select election.id as election_id,
-        extract(year from election.e_date) as year,
-        country.name as countryName
-    from country, election
-    where country.id = election.country_id and
-        extract(year from election.e_date) >= 1996 and
-        extract(year from election.e_date) <= 2016
+-- find vote percentage for each party in each election, each country, each year
+create view votePercent as (
+    select E.country_id, ER.party_id,
+        extract(year from E.e_date) as year,
+        1.0*ER.votes/E.votes_valid as percent
+    from election as E, election_result as ER
+    where E.id = ER.election_id and
+        ER.votes is not null and
+        E.votes_valid is not null and
+        extract(year from E.e_date) >= 1996 and
+        extract(year from E.e_date) <= 2016
 );
 
-create view voteRange_partyName as(
-    select election.id as election_id, party.name_short as partyName,
+-- for each party in each country, each year, find average vote percentage
+-- and voteRange
+create view voteRange as (
+    select country_id, party_id, year,
         case
-        when 0 <= 1.0*election_result.votes/election.votes_valid and 1.0*election_result.votes/election.votes_valid <= 0.05
+        when 0 <= 1.0*sum(percent)/count(percent) and 1.0*sum(percent)/count(percent) <= 0.05
         Then '(0-5]'
-        when 0.05 < 1.0*election_result.votes/election.votes_valid and 1.0*election_result.votes/election.votes_valid <= 0.1
+        when 0.05 < 1.0*sum(percent)/count(percent) and 1.0*sum(percent)/count(percent) <= 0.1
         Then '(5-10]'
-        when 0.1 < 1.0*election_result.votes/election.votes_valid and 1.0*election_result.votes/election.votes_valid <= 0.2
+        when 0.1 < 1.0*sum(percent)/count(percent) and 1.0*sum(percent)/count(percent) <= 0.2
         Then '(10-20]'
-        when 0.2 < 1.0*election_result.votes/election.votes_valid and 1.0*election_result.votes/election.votes_valid <= 0.3
+        when 0.2 < 1.0*sum(percent)/count(percent) and 1.0*sum(percent)/count(percent) <= 0.3
         Then '(20-30]'
-        when 0.3 < 1.0*election_result.votes/election.votes_valid and 1.0*election_result.votes/election.votes_valid <= 0.4
+        when 0.3 < 1.0*sum(percent)/count(percent) and 1.0*sum(percent)/count(percent) <= 0.4
         Then '(30-40]'
-        when 0.4 < 1.0*election_result.votes/election.votes_valid and 1.0*election_result.votes/election.votes_valid <= 1
+        when 0.4 < 1.0*sum(percent)/count(percent) and 1.0*sum(percent)/count(percent) <= 1
         Then '(40-100]'
         end as voteRange
-    from election, election_result, party
-    where election.id = election_result.election_id and
-        election_result.party_id = party.id
+    from votePercent
+    group by country_id, party_id, year
 );
 
 -- the answer to the query
 insert into q1 (
-    select year, countryName, voteRange, partyName
-    from year_countryName, voteRange_partyName
-    where voteRange_partyName.election_id = year_countryName.election_id
+    select year, C.name as countryName, voteRange, P.name_short as partyName
+    from voteRange as VR, party as P, country as C
+    where VR.country_id = C.id and
+        VR.party_id = P.id
 );

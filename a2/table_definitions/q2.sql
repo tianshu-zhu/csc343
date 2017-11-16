@@ -14,76 +14,87 @@ mostRecentlyWonElectionId INT,
 mostRecentlyWonElectionYear INT
 );
 
-
 -- You may find it convenient to do this for each of the views
 -- that define your intermediate steps.  (But give them better names!)
-DROP VIEW IF EXISTS avgWinning, winningParty, threeAvgParty, mostRecentWon CASCADE;
+DROP VIEW IF EXISTS won_parties, num_wons, num_parties, num_elections,
+    average_wons, major_won_parties, most_recent_wons CASCADE;
 
 -- Define views for your intermediate steps here.
 
--- Find average number of winning election for each country
-create view avgWinning as (
-    select 1.0*count(E.id)/count(distinct ER.party_id) as avgNumWinningElections,
-        E.country_id
-    from election as E, election_result as ER
-    where E.id = ER.election_id
-    group by E.country_id
-);
-
--- find winning party of each election
-create view winningParty as (
-    select ER.party_id, ER.election_id, E.country_id, E.e_date
-    from election_result as ER, election as E
-    where ER.election_id = E.id and
-        ER.votes = (
+-- Find all parties that have won some elections
+create view won_parties as (
+    select election_id, party_id
+    from election_result as E1
+    where votes = (
         select max(votes)
-        from election_result as subER
-        where ER.election_id = subER.election_id
-        )
+        from election_result as E2
+        where E1.election_id = E2.election_id
+    )
 );
 
--- find number of winning election of each party
--- find party who have won > 3*average
-create view threeAvgParty as (
-    select party_id, country_id, count(election_id) as wonElections
-    from winningParty as WP
-    group by party_id, country_id
-    having count(election_id) > (
-        select avgNUmWinningElections*3
-        from avgWinning as AW, party
-        where WP.party_id = party.id and
-            party.country_id = AW.country_id
-        )
+-- Find number of wins of each party who have won
+-- Find the most recent won election date of each party
+create view num_wons as (
+    select WP.party_id, count(*) as num_won, max(E.e_date) as most_recent_e_date
+    from won_parties as WP, election as E
+    where WP.election_id = E.id
+    group by WP.party_id
 );
 
--- for each wining party
--- find most recent won election id and year
-create view mostRecentWon as (
-    select party_id, election_id as mostRecentlyWonElectionId,
-        extract(year from e_date) as mostRecentlyWonElectionYear
-    from winningParty as WP
-    where e_date = (
-        select max(e_date)
-        from winningParty as subWP
-        where WP.party_id = subWP.party_id
-        )
+-- Find number of parties in each country
+create view num_parties as (
+    select count(*) as num_party, country_id
+    from party
+    group by country_id
 );
 
--- the answer to the query 
+-- Find the total number of won elections of each country
+create view num_elections as (
+    select P.country_id, sum(NW.num_won) as num_election
+    from party as P, num_wons as NW
+    where NW.party_id = P.id
+    group by P.country_id
+);
+
+-- Find 3 times the average number of won elections of each country
+create view average_wons as (
+    select NP.country_id, ((3.0*NE.num_election)/NP.num_party) as three_average
+    from num_parties as NP, num_elections as NE
+    where NP.country_id = NE.country_id
+);
+
+-- Find all parties that have won more than three times the average
+create view major_won_parties as (
+    select P.country_id, P.id as party_id, NW.num_won, NW.most_recent_e_date
+    from num_wons as NW, party as P, average_wons as A
+    where p.ID = NW.party_id and
+        P.country_id = A.country_id and
+        NW.num_won > A.three_average
+);
+
+-- Find most recent election id and year of each major won party
+create view most_recent_wons as (
+    select MWP.country_id, MWP.party_id, MWP.num_won,
+        E.id as mostRecentlyWonElectionId,
+        extract(year from E.e_date) as mostRecentlyWonElectionYear
+    from major_won_parties as MWP, election_result as ER, election as E
+    where MWP.party_id = ER.party_id and
+        ER.election_id = E.id and
+        E.e_date = MWP.most_recent_e_date
+);
+
+-- the answer to the query
 insert into q2 (
-    select country.name as countryName,
-        party.name as partyName,
+    select C.name as countryName,
+        P.name as partyName,
         PF.family as partyFamily,
-        TAP.wonElections as wonElections,
-        MRW.mostRecentlyWonElectionId as mostRecentlyWonElectionId,
-        MRW.mostRecentlyWonElectionYear as mostRecentlyWonElectionYear
-    from threeAvgParty as TAP inner join mostRecentWon as MRW
-        on TAP.party_id = MRW.party_id
-        inner join party
-        on TAP.party_id = Party.id
-        inner join country
-        on TAP.country_id = country.id
+        MRW.num_won as wonElections,
+        MRW.mostRecentlyWonElectionId,
+        MRW.mostRecentlyWonElectionYear
+    from most_recent_wons as MRW inner join country as C
+        on MRW.country_id = C.id
+        inner join party as P
+        on MRW.party_id = P.id
         left join party_family as PF
-        on TAP.party_id = PF.party_id
-);  
-
+        on MRW.party_id = PF.party_id
+);
