@@ -1,0 +1,140 @@
+csc343h-zhutians=> \echo -- Loading schema and data:
+-- Loading schema and data:
+csc343h-zhutians=> \i schema.sql
+psql:schema.sql:1: NOTICE:  drop cascades to 11 other objects
+DETAIL:  drop cascades to table quizschema.student
+drop cascades to table quizschema.class
+drop cascades to table quizschema.student_class
+drop cascades to table quizschema.quiz
+drop cascades to type quizschema.q_type
+drop cascades to table quizschema.question
+drop cascades to table quizschema.question_quiz
+drop cascades to table quizschema.student_answer
+drop cascades to table quizschema.hint
+drop cascades to view quizschema.question_with_hint
+drop cascades to view quizschema.question_without_hint
+DROP SCHEMA
+CREATE SCHEMA
+SET
+psql:schema.sql:6: NOTICE:  table "student" does not exist, skipping
+psql:schema.sql:6: NOTICE:  table "class" does not exist, skipping
+psql:schema.sql:6: NOTICE:  table "student_class" does not exist, skipping
+psql:schema.sql:6: NOTICE:  table "quiz" does not exist, skipping
+psql:schema.sql:6: NOTICE:  table "question" does not exist, skipping
+psql:schema.sql:6: NOTICE:  table "question_quiz" does not exist, skipping
+psql:schema.sql:6: NOTICE:  table "student_answer" does not exist, skipping
+psql:schema.sql:6: NOTICE:  table "hint" does not exist, skipping
+DROP TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TYPE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+csc343h-zhutians=> \i data.sql
+SET
+INSERT 0 5
+INSERT 0 11
+INSERT 0 2
+INSERT 0 1
+INSERT 0 4
+INSERT 0 6
+INSERT 0 14
+INSERT 0 6
+csc343h-zhutians=> \echo -- Query 1:
+-- Query 1:
+csc343h-zhutians=> \i q1.sql
+SET
+   full_name    |     id     
+----------------+------------
+ LenaHeadey     | 0998801234
+ PeterDinklage  | 0010784522
+ EmiliaClarke   | 0997733991
+ KitHarrington  | 5555555555
+ SophieTurner   | 1111111111
+ MaisieWilliams | 2222222222
+(6 rows)
+
+csc343h-zhutians=> \echo -- Query 2:
+-- Query 2:
+csc343h-zhutians=> \i q2.sql
+SET
+psql:q2.sql:4: NOTICE:  view "question_with_hint" does not exist, skipping
+psql:q2.sql:4: NOTICE:  view "question_without_hint" does not exist, skipping
+DROP VIEW
+CREATE VIEW
+psql:q2.sql:16: WARNING:  column "hint_count" has type "unknown"
+DETAIL:  Proceeding with relation creation anyway.
+CREATE VIEW
+ id  |                                                                   question_text                                                                   | hint_count 
+-----+---------------------------------------------------------------------------------------------------------------------------------------------------+------------
+ 566 | The Prime Minister, Justin Trudeau, is Canadas Head of State.                                                                                     |           
+ 601 | During the "Quiet Revolution," Quebec experienced rapid change. In what decade did this occur? (Enter the year that began the decade, e.g., 1840. |          3
+ 782 | To pledge your loyalty to the Sovereign, Queen Elizabeth II                                                                                       |          1
+ 790 | During the War of 1812 the Americans burned down the Parliament Buildings in York (now Toronto). What did the British and Canadians do in return? |          0
+ 625 | What is the Underground Railroad?                                                                                                                 |          3
+(5 rows)
+
+csc343h-zhutians=> \echo -- Query 3:
+-- Query 3:
+csc343h-zhutians=> \i q3.sql
+SET
+psql:q3.sql:4: NOTICE:  view "question_in_quiz" does not exist, skipping
+psql:q3.sql:4: NOTICE:  view "chosen_student" does not exist, skipping
+psql:q3.sql:4: NOTICE:  view "student_answered" does not exist, skipping
+DROP VIEW
+CREATE VIEW
+CREATE VIEW
+CREATE VIEW
+     id     | last_name  | sum 
+------------+------------+-----
+ 0010784522 | Dinklage   |   8
+ 0998801234 | Headey     |   3
+ 1111111111 | Turner     |   0
+ 0997733991 | Clarke     |   5
+ 5555555555 | Harrington |   1
+(5 rows)
+
+csc343h-zhutians=> \echo -- Query 4:
+-- Query 4:
+csc343h-zhutians=> \i q4.sql
+psql:q4.sql:3: NOTICE:  drop cascades to view student_answered
+DROP VIEW
+SET
+CREATE VIEW
+CREATE VIEW
+     id     | question_id |                                                                   question_text                                                                   
+------------+-------------+---------------------------------------------------------------------------------------------------------------------------------------------------
+ 1111111111 |         566 | The Prime Minister, Justin Trudeau, is Canadas Head of State.
+ 5555555555 |         601 | During the "Quiet Revolution," Quebec experienced rapid change. In what decade did this occur? (Enter the year that began the decade, e.g., 1840.
+ 1111111111 |         601 | During the "Quiet Revolution," Quebec experienced rapid change. In what decade did this occur? (Enter the year that began the decade, e.g., 1840.
+ 5555555555 |         625 | What is the Underground Railroad?
+ 1111111111 |         625 | What is the Underground Railroad?
+ 1111111111 |         790 | During the War of 1812 the Americans burned down the Parliament Buildings in York (now Toronto). What did the British and Canadians do in return?
+(6 rows)
+
+csc343h-zhutians=> \echo -- Query 5:
+-- Query 5:
+csc343h-zhutians=> \i q5.sql
+SET
+psql:q5.sql:3: NOTICE:  view "answered_correct" does not exist, skipping
+psql:q5.sql:3: NOTICE:  schema "answered_wrong" does not exist, skipping
+psql:q5.sql:3: NOTICE:  view "pre_output" does not exist, skipping
+DROP VIEW
+CREATE VIEW
+CREATE VIEW
+CREATE VIEW
+CREATE VIEW
+CREATE VIEW
+CREATE VIEW
+ question_id | num_not_answered | num_correct_answered | num_wrong_answered 
+-------------+------------------+----------------------+--------------------
+         566 |                1 |                    3 |                  1
+         601 |                2 |                    2 |                  1
+         625 |                2 |                    2 |                  1
+         790 |                1 |                    2 |                  2
+(4 rows)
+
