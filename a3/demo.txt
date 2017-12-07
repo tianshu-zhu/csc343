@@ -48,7 +48,7 @@ csc343h-zhutians=> \echo -- Query 1:
 -- Query 1:
 csc343h-zhutians=> \i q1.sql
 SET
-   full_name    |     id     
+   full_name    |     id
 ----------------+------------
  LenaHeadey     | 0998801234
  PeterDinklage  | 0010784522
@@ -69,11 +69,11 @@ CREATE VIEW
 psql:q2.sql:16: WARNING:  column "hint_count" has type "unknown"
 DETAIL:  Proceeding with relation creation anyway.
 CREATE VIEW
- id  |                                                                   question_text                                                                   | hint_count 
+ id  |                                                                   question_text                                                                   | hint_count
 -----+---------------------------------------------------------------------------------------------------------------------------------------------------+------------
- 566 | The Prime Minister, Justin Trudeau, is Canadas Head of State.                                                                                     |           
+ 566 | The Prime Minister, Justin Trudeau, is Canadas Head of State.                                                                                     |
  601 | During the "Quiet Revolution," Quebec experienced rapid change. In what decade did this occur? (Enter the year that began the decade, e.g., 1840. |          3
- 782 | To pledge your loyalty to the Sovereign, Queen Elizabeth II                                                                                       |          1
+ 782 | What do you promise when you take the oath of citizenship?                                                                                        |          1
  790 | During the War of 1812 the Americans burned down the Parliament Buildings in York (now Toronto). What did the British and Canadians do in return? |          0
  625 | What is the Underground Railroad?                                                                                                                 |          3
 (5 rows)
@@ -89,7 +89,7 @@ DROP VIEW
 CREATE VIEW
 CREATE VIEW
 CREATE VIEW
-     id     | last_name  | sum 
+     id     | last_name  | sum
 ------------+------------+-----
  0010784522 | Dinklage   |   8
  0998801234 | Headey     |   3
@@ -106,7 +106,7 @@ DROP VIEW
 SET
 CREATE VIEW
 CREATE VIEW
-     id     | question_id |                                                                   question_text                                                                   
+     id     | question_id |                                                                   question_text
 ------------+-------------+---------------------------------------------------------------------------------------------------------------------------------------------------
  1111111111 |         566 | The Prime Minister, Justin Trudeau, is Canadas Head of State.
  5555555555 |         601 | During the "Quiet Revolution," Quebec experienced rapid change. In what decade did this occur? (Enter the year that began the decade, e.g., 1840.
@@ -130,11 +130,10 @@ CREATE VIEW
 CREATE VIEW
 CREATE VIEW
 CREATE VIEW
- question_id | num_not_answered | num_correct_answered | num_wrong_answered 
+ question_id | num_not_answered | num_correct_answered | num_wrong_answered
 -------------+------------------+----------------------+--------------------
          566 |                1 |                    3 |                  1
          601 |                2 |                    2 |                  1
          625 |                2 |                    2 |                  1
          790 |                1 |                    2 |                  2
 (4 rows)
-

@@ -2,17 +2,17 @@ set search_path to quizschema;
 
 
 insert into question (id, question_type, question_text, correct_answer) values
-    (782, 'Multiple-choice', 
-    'To pledge your loyalty to the Sovereign, Queen Elizabeth II',
-    'What do you promise when you take the oath of citizenship?'),
+    (782, 'Multiple-choice',
+    'What do you promise when you take the oath of citizenship?',
+    'To pledge your loyalty to the Sovereign, Queen Elizabeth II'),
     (566, 'True-False', 'The Prime Minister, Justin Trudeau, is Canadas Head of State.', 'False'),
     (601, 'Numeric', 'During the "Quiet Revolution," Quebec experienced rapid change. In what decade did this occur? (Enter the year that began the decade, e.g., 1840.', '1960'),
-    (625, 'Multiple-choice', 'What is the Underground Railroad?', 
+    (625, 'Multiple-choice', 'What is the Underground Railroad?',
     'A network used by slaves who escaped the United States into Canada'),
-    (790, 'Multiple-choice', 'During the War of 1812 the Americans burned down the Parliament Buildings in York (now Toronto). What did the British and Canadians do in return?', 'They burned down the White House in Washington D.C.');  
-    
-    
-    
+    (790, 'Multiple-choice', 'During the War of 1812 the Americans burned down the Parliament Buildings in York (now Toronto). What did the British and Canadians do in return?', 'They burned down the White House in Washington D.C.');
+
+
+
 insert into hint (question_id, wrong_answer, hint) values
     (782, 'To pledge your allegiance to the flag and fulfill the duties of a Canadian', 'Think regally'),
     (782, 'To pledge your loyalty to Canada from sea to sea', null),
@@ -21,14 +21,14 @@ insert into hint (question_id, wrong_answer, hint) values
     (601, '2020-3000', 'The Quiet Revolution has already happened!'),
     (625, 'The first railway to cross Canada', 'The Underground Railroad was generally south to north, not east-west.'),
     (625, 'The CPRs secret railway line', 'The Underground Railroad was secret, but it had nothing to do with trains.'),
-    (625, 'The TTC subway system', 'The TTC is relatively recent; the Underground Railroad was 
+    (625, 'The TTC subway system', 'The TTC is relatively recent; the Underground Railroad was
     in operation over 100 years ago.'),
     (790, 'They attacked American merchant ships', null),
     (790, 'They expanded their defence system, including Fort York', null),
-    (790, 'They captured Niagara Falls', null);    
+    (790, 'They captured Niagara Falls', null);
 
-    
-    
+
+
 insert into class (id, grade, room, teacher) values
     (1, 8, 'room 120', 'Mr Higgins'),
     (2, 5, 'room 366', 'Miss Nyers');
